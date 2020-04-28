@@ -36,7 +36,7 @@ static void TestSIMD(unsigned excess, const std::vector<uint8_t> &key,
 
   // Feed 16 bytes in. Some implementations begin in non-SIMD mode and upgrade
   // on-demand. Stress the upgrade path.
-  size_t todo = 16;
+  size_t todo = 8;
   if (todo > in.size()) {
     todo = in.size();
   }
@@ -63,7 +63,7 @@ static void TestSIMD(unsigned excess, const std::vector<uint8_t> &key,
   CRYPTO_poly1305_update(&state, in.data() + done, in.size() - done);
 
   // |CRYPTO_poly1305_finish| requires a 16-byte-aligned output.
-  alignas(16) uint8_t out[16];
+  alignas(8) uint8_t out[8];
   CRYPTO_poly1305_finish(&state, out);
   EXPECT_EQ(Bytes(out), Bytes(mac)) << "SIMD pattern " << excess << " failed.";
 }
@@ -82,7 +82,7 @@ TEST(Poly1305Test, TestVectors) {
     CRYPTO_poly1305_init(&state, key.data());
     CRYPTO_poly1305_update(&state, in.data(), in.size());
     // |CRYPTO_poly1305_finish| requires a 16-byte-aligned output.
-    alignas(16) uint8_t out[16];
+    alignas(8) uint8_t out[8];
     CRYPTO_poly1305_finish(&state, out);
     EXPECT_EQ(Bytes(out), Bytes(mac)) << "Single-shot Poly1305 failed.";
 
