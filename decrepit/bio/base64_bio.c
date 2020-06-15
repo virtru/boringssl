@@ -518,11 +518,18 @@ static long b64_callback_ctrl(BIO *b, int cmd, bio_info_cb fp) {
   if (b->next_bio == NULL) {
     return 0;
   }
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4065)
+#endif
   switch (cmd) {
     default:
       ret = BIO_callback_ctrl(b->next_bio, cmd, fp);
       break;
   }
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
   return ret;
 }
 
